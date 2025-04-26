@@ -3,12 +3,15 @@ import 'package:hidden_drawer_menu/controllers/simple_hidden_drawer_controller.d
 import 'package:provider/provider.dart';
 import 'package:softec_project/providers/user_provider.dart';
 import 'package:softec_project/screens/add_new_task_screen.dart';
-import 'package:softec_project/screens/chat_screen.dart';
-import 'package:softec_project/screens/task_builder.dart';
+import 'package:softec_project/screens/task_screen.dart';
 import 'package:softec_project/theme/theme.dart';
 import 'package:softec_project/providers/task_provider.dart';
 import 'package:softec_project/providers/auth_provider.dart';
-import 'package:intl/intl.dart';
+import 'package:softec_project/screens/task_builder.dart';
+import 'package:softec_project/screens/calendar_screen.dart';
+import 'package:softec_project/screens/mood_screen.dart';
+import 'package:softec_project/screens/reminders_screen.dart';
+import 'package:softec_project/screens/summaries_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,13 +21,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
   final String randomAvatarUrl = 'https://i.pravatar.cc/300';
 
   @override
   void initState() {
     super.initState();
-    // Fetch tasks when the screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final uid = Provider.of<AuthProvider>(context, listen: false).user?.uid;
       if (uid != null) {
@@ -35,8 +36,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context);
-    final user = userProvider.user;
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -45,9 +44,8 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 16, 16, 0),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   IconButton(
                     icon: const Icon(Icons.menu),
@@ -55,97 +53,183 @@ class _HomePageState extends State<HomePage> {
                       SimpleHiddenDrawerController.of(context).toggle();
                     },
                   ),
-                  const Text("Home"),
+                  const Text(
+                    "Dashboard",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
                   const Spacer(),
                   CircleAvatar(
                     backgroundImage: NetworkImage(randomAvatarUrl),
-                    radius: 24,
+                    radius: 20,
                   ),
                 ],
               ),
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildNavButton(0, 'Tasks', theme),
-                  _buildNavButton(1, 'Calendar', theme),
-                  _buildNavButton(2, 'Analytics', theme),
-                ],
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    // Tasks Container
+                    _buildDashboardCard(
+                      context,
+                      title: "Tasks",
+                      description:
+                          "Easily schedule event/games\nthen find like minded players for battle. You up for it?",
+                      icon: Icons.task,
+                      color: Colors.blue,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Schedule Container
+                    _buildDashboardCard(
+                      context,
+                      title: "Schedule",
+                      description:
+                          "All data from previous and\nupcoming games can be found here",
+                      icon: Icons.calendar_today,
+                      color: Colors.green,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Mood Container
+                    _buildDashboardCard(
+                      context,
+                      title: "Mood",
+                      description:
+                          "Find out what's new and compete among players\nwith new challenges and earn cash with game points",
+                      icon: Icons.mood,
+                      color: Colors.orange,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Reminders Container
+                    _buildDashboardCard(
+                      context,
+                      title: "Reminders",
+                      description:
+                          "Found the profile of a player\nthat interests you? Start a\nconversation",
+                      icon: Icons.notifications,
+                      color: Colors.purple,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Summaries Container
+                    _buildDashboardCard(
+                      context,
+                      title: "Summaries",
+                      description: "View your task summaries",
+                      icon: Icons.summarize,
+                      color: Colors.teal,
+                    ),
+                  ],
+                ),
               ),
             ),
-            Expanded(child: _buildSelectedScreen()),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AddTaskScreen()),
-          );
-        },
-        backgroundColor: theme.colorScheme.primary,
-        child: Icon(Icons.add, color: theme.colorScheme.onPrimary),
-      ),
     );
   }
 
-  Widget _buildNavButton(int index, String title, ThemeData theme) {
-    final isSelected = _selectedIndex == index;
-
+  Widget _buildDashboardCard(
+    BuildContext context, {
+    required String title,
+    required String description,
+    required IconData icon,
+    required Color color,
+  }) {
     return GestureDetector(
       onTap: () {
-        setState(() {
-          _selectedIndex = index;
-        });
+        switch (title.toLowerCase()) {
+          case 'tasks':
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => TaskScreen()),
+            );
+            break;
+          case 'schedule':
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const CalendarScreen()),
+            );
+            break;
+          case 'mood':
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MoodScreen()),
+            );
+            break;
+          case 'reminders':
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const RemindersScreen()),
+            );
+            break;
+          case 'summaries':
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const SummariesScreen()),
+            );
+            break;
+        }
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color:
-              isSelected
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(24),
+          color: color,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        child: Text(
-          title,
-          style: TextStyle(
-            color:
-                isSelected
-                    ? theme.colorScheme.onPrimary
-                    : theme.colorScheme.onSurface,
-            fontWeight: FontWeight.bold,
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, size: 28, color: Colors.white),
+                const SizedBox(width: 12),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              description,
+              style: const TextStyle(
+                fontSize: 16,
+                height: 1.4,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Icon(
+                Icons.chevron_right,
+                color: Colors.white.withOpacity(0.8),
+                size: 28,
+              ),
+            ),
+          ],
         ),
       ),
-    );
-  }
-
-  Widget _buildSelectedScreen() {
-    switch (_selectedIndex) {
-      case 0:
-        return buildTasksList(context);
-      case 1:
-        return _buildCalendarView();
-      case 2:
-        return _buildAnalyticsView();
-      default:
-        return buildTasksList(context);
-    }
-  }
-
-  Widget _buildCalendarView() {
-    return const Center(
-      child: Text('Calendar View Coming Soon', style: TextStyle(fontSize: 16)),
-    );
-  }
-
-  Widget _buildAnalyticsView() {
-    return const Center(
-      child: Text('Analytics View Coming Soon', style: TextStyle(fontSize: 16)),
     );
   }
 }
