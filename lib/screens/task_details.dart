@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:softec_project/models/task_model.dart';
 import 'package:softec_project/providers/task_provider.dart';
 import 'package:softec_project/providers/auth_provider.dart';
-import 'package:intl/intl.dart';
 
 class TaskDetails extends StatefulWidget {
   final Task task;
@@ -15,31 +14,22 @@ class TaskDetails extends StatefulWidget {
 
 class _TaskDetailsState extends State<TaskDetails> {
   late TextEditingController _titleController;
-  late TextEditingController _descriptionController;
-  late DateTime _dueDate;
-  late String _category;
-  bool _isLoading = false; // ADD THIS
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.task.title);
-    _descriptionController = TextEditingController(
-      text: widget.task.description,
-    );
-    _dueDate = widget.task.dueDate;
-    _category = widget.task.category;
   }
 
   @override
   void dispose() {
     _titleController.dispose();
-    _descriptionController.dispose();
     super.dispose();
   }
 
   Future<void> _updateTask() async {
-    if (_isLoading) return; // Prevent multiple updates
+    if (_isLoading) return;
 
     final uid = Provider.of<AuthProvider>(context, listen: false).user?.uid;
     if (uid == null) return;
@@ -47,16 +37,14 @@ class _TaskDetailsState extends State<TaskDetails> {
     final updatedTask = Task(
       id: widget.task.id,
       title: _titleController.text,
-      description: _descriptionController.text,
-      dueDate: _dueDate,
-      category: _category,
+      description: widget.task.description, // Keep original
+      dueDate: widget.task.dueDate, // Keep original
+      category: widget.task.category, // Keep original
       isCompleted: widget.task.isCompleted,
       createdAt: widget.task.createdAt,
     );
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
       await Provider.of<TaskProvider>(
@@ -69,44 +57,18 @@ class _TaskDetailsState extends State<TaskDetails> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Task updated successfully'),
-          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
         ),
       );
 
-      // Navigate back after a short delay
-      await Future.delayed(const Duration(milliseconds: 5000));
-      if (mounted) {
-        Navigator.of(context).pop();
-      }
+      Navigator.pop(context);
     } catch (e) {
       if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to update task: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _dueDate,
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null && picked != _dueDate) {
-      setState(() {
-        _dueDate = picked;
-      });
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -114,18 +76,14 @@ class _TaskDetailsState extends State<TaskDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Task Details'),
+        title: const Text('Edit Task'),
         actions: [
           _isLoading
               ? const Padding(
                 padding: EdgeInsets.all(12.0),
-                child: SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
-                  ),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
                 ),
               )
               : IconButton(
@@ -134,55 +92,22 @@ class _TaskDetailsState extends State<TaskDetails> {
               ),
         ],
       ),
-      body: SingleChildScrollView(
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
               controller: _titleController,
               decoration: const InputDecoration(
-                labelText: 'Title',
+                labelText: 'Task Title',
                 border: OutlineInputBorder(),
               ),
+              autofocus: true,
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Description',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 3,
-            ),
-            const SizedBox(height: 16),
-            ListTile(
-              title: const Text('Due Date'),
-              subtitle: Text(DateFormat('MMM dd, yyyy').format(_dueDate)),
-              trailing: const Icon(Icons.calendar_today),
-              onTap: () => _selectDate(context),
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: _category,
-              decoration: const InputDecoration(
-                labelText: 'Category',
-                border: OutlineInputBorder(),
-              ),
-              items: const [
-                DropdownMenuItem(value: 'General', child: Text('General')),
-                DropdownMenuItem(value: 'Work', child: Text('Work')),
-                DropdownMenuItem(value: 'Personal', child: Text('Personal')),
-                DropdownMenuItem(value: 'Shopping', child: Text('Shopping')),
-                DropdownMenuItem(value: 'Other', child: Text('Other')),
-              ],
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    _category = value;
-                  });
-                }
-              },
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _updateTask,
+              child: const Text('Save Changes'),
             ),
           ],
         ),

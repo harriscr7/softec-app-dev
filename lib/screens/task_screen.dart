@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:softec_project/providers/task_provider.dart';
 import 'package:softec_project/providers/auth_provider.dart';
 import 'package:softec_project/screens/task_details.dart';
 import 'package:softec_project/screens/add_new_task_screen.dart';
 
-// Task Screen with list of tasks
 class TaskScreen extends StatelessWidget {
   const TaskScreen({super.key});
 
@@ -114,6 +112,7 @@ class TaskScreen extends StatelessWidget {
                       },
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 12),
+                        height: 80, // Fixed height for each task item
                         decoration: BoxDecoration(
                           color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(12),
@@ -136,101 +135,18 @@ class TaskScreen extends StatelessWidget {
                               ),
                             );
                           },
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        task.title,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    if (task.isRecurring)
-                                      const Icon(
-                                        Icons.repeat,
-                                        size: 18,
-                                        color: Colors.blue,
-                                      ),
-                                  ],
+                          child: Center(
+                            // Centered title
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Text(
+                                task.title,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                if (task.description != null &&
-                                    task.description!.isNotEmpty)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 8),
-                                    child: Text(
-                                      task.description!,
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
-                                  ),
-                                const SizedBox(height: 12),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.calendar_today,
-                                      size: 16,
-                                      color: Colors.grey[600],
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      DateFormat(
-                                        'MMM dd, yyyy',
-                                      ).format(task.dueDate),
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Icon(
-                                      Icons.category,
-                                      size: 16,
-                                      color: Colors.grey[600],
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      task.category,
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                if (task.moodTag != null)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 8),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.emoji_emotions,
-                                          size: 16,
-                                          color: Colors.grey[600],
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          task.moodTag!,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.grey[600],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                              ],
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ),
                         ),
