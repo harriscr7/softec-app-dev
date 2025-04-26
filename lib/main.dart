@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:softec_project/providers/mood_provider.dart';
 import 'package:softec_project/providers/task_provider.dart';
 import 'package:softec_project/providers/user_provider.dart';
 import 'package:softec_project/services/notifications_services.dart';
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
-
+        ChangeNotifierProvider(create: (_) => MoodProvider()),
         ChangeNotifierProvider(create: (_) => TaskProvider()),
       ],
       child: Consumer<ThemeProvider>(
