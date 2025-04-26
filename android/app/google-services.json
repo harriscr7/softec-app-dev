@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "921920018913",
+    "project_id": "softec-project-23983",
+    "storage_bucket": "softec-project-23983.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:921920018913:android:9e1432b96b1ac1cf30daa0",
+        "android_client_info": {
+          "package_name": "com.example.softec_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqc4xFLdNOqYXhCm61-nTP2ppksb_X4kM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
