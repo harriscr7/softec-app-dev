@@ -50,4 +50,28 @@ class Task {
       createdAt: DateTime.parse(map['createdAt']),
     );
   }
+
+  Task copyWith({
+    String? id,
+    String? title,
+    String? description,
+    DateTime? dueDate,
+    String? category,
+    bool? isCompleted,
+    String? moodTag,
+    bool? isRecurring,
+    DateTime? createdAt,
+  }) {
+    return Task(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      dueDate: dueDate ?? this.dueDate,
+      category: category ?? this.category,
+      isCompleted: isCompleted ?? this.isCompleted,
+      moodTag: moodTag ?? this.moodTag,
+      isRecurring: isRecurring ?? this.isRecurring,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 }
