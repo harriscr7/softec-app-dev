@@ -12,6 +12,7 @@ import 'package:softec_project/screens/calendar_screen.dart';
 import 'package:softec_project/screens/mood_screen.dart';
 import 'package:softec_project/screens/reminders_screen.dart';
 import 'package:softec_project/screens/summaries_screen.dart';
+import 'package:softec_project/screens/goal_planner_screen.dart'; // Add this import
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -74,8 +75,7 @@ class _HomePageState extends State<HomePage> {
                     _buildDashboardCard(
                       context,
                       title: "Tasks",
-                      description:
-                          "Easily schedule event/games\nthen find like minded players for battle. You up for it?",
+                      description: "Manage your daily tasks and to-do items",
                       icon: Icons.task,
                       color: Colors.blue,
                     ),
@@ -86,8 +86,7 @@ class _HomePageState extends State<HomePage> {
                     _buildDashboardCard(
                       context,
                       title: "Schedule",
-                      description:
-                          "All data from previous and\nupcoming games can be found here",
+                      description: "View and manage your calendar schedule",
                       icon: Icons.calendar_today,
                       color: Colors.green,
                     ),
@@ -98,8 +97,7 @@ class _HomePageState extends State<HomePage> {
                     _buildDashboardCard(
                       context,
                       title: "Mood",
-                      description:
-                          "Find out what's new and compete among players\nwith new challenges and earn cash with game points",
+                      description: "Track your daily mood and emotional trends",
                       icon: Icons.mood,
                       color: Colors.orange,
                     ),
@@ -110,8 +108,7 @@ class _HomePageState extends State<HomePage> {
                     _buildDashboardCard(
                       context,
                       title: "Reminders",
-                      description:
-                          "Found the profile of a player\nthat interests you? Start a\nconversation",
+                      description: "Set and manage your important reminders",
                       icon: Icons.notifications,
                       color: Colors.purple,
                     ),
@@ -122,9 +119,20 @@ class _HomePageState extends State<HomePage> {
                     _buildDashboardCard(
                       context,
                       title: "Summaries",
-                      description: "View your task summaries",
+                      description: "View your task summaries and insights",
                       icon: Icons.summarize,
                       color: Colors.teal,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Goal Planner Container (New)
+                    _buildDashboardCard(
+                      context,
+                      title: "Goal Planner",
+                      description: "Break down big goals into actionable steps",
+                      icon: Icons.checklist_rtl,
+                      color: Colors.indigo,
                     ),
                   ],
                 ),
@@ -174,6 +182,14 @@ class _HomePageState extends State<HomePage> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const SummariesScreen()),
+            );
+            break;
+          case 'goal planner': // New case
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const GoalPlannerScreen(),
+              ),
             );
             break;
         }
