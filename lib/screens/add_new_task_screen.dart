@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:softec_project/screens/scan_task_screen.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../models/task_model.dart';
 import '../providers/task_provider.dart';
@@ -16,6 +17,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _titleController;
   late stt.SpeechToText _speech;
+  DateTime _selectedDate = DateTime.now();
+  TimeOfDay _selectedTime = TimeOfDay.now();
   bool _speechEnabled = false;
   bool _isListening = false;
   String _lastWords = '';
@@ -88,7 +91,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       await _saveTask();
       setState(() {
         _autoSubmitPending = false;
-        _lastWords = ''; // Reset last words after auto-submit
+        _lastWords = '';
       });
     }
   }
@@ -152,12 +155,46 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     }
   }
 
+  Future<void> _selectDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
+  }
+
+  Future<void> _selectTime() async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime,
+    );
+    if (picked != null && picked != _selectedTime) {
+      setState(() {
+        _selectedTime = picked;
+      });
+    }
+  }
+
   Future<void> _saveTask() async {
     if (_formKey.currentState!.validate()) {
+      final dueDateTime = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+        _selectedTime.hour,
+        _selectedTime.minute,
+      );
+
       final newTask = Task(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: _titleController.text,
-        dueDate: DateTime.now().add(const Duration(days: 1)),
+        dueDate: dueDateTime,
         category: 'General',
         isRecurring: false,
         createdAt: DateTime.now(),
@@ -183,8 +220,24 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.primaryColor;
+    final textTheme = theme.textTheme;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Add New Task')),
+      floatingActionButton: FloatingActionButton(
+        onPressed:
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ScanTaskScreen()),
+            ),
+        backgroundColor: primaryColor,
+        child: const Icon(Icons.document_scanner, color: Colors.white),
+      ),
+      appBar: AppBar(
+        title: const Text('Add New Task'),
+        backgroundColor: primaryColor,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -193,10 +246,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             children: [
               TextFormField(
                 controller: _titleController,
+                style: textTheme.bodyMedium,
                 decoration: InputDecoration(
                   labelText: 'Task Title*',
+                  labelStyle: textTheme.bodyMedium,
                   border: const OutlineInputBorder(),
-                  suffixIcon: _buildMicButton(),
+                  suffixIcon: _buildMicButton(primaryColor),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -205,25 +260,68 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   return null;
                 },
               ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _selectDate,
+                      icon: Icon(Icons.calendar_today, color: primaryColor),
+                      label: Text(
+                        '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: primaryColor,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: primaryColor,
+                        backgroundColor: primaryColor.withOpacity(0.1),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _selectTime,
+                      icon: Icon(Icons.access_time, color: primaryColor),
+                      label: Text(
+                        _selectedTime.format(context),
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: primaryColor,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: primaryColor,
+                        backgroundColor: primaryColor.withOpacity(0.1),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               if (_isListening)
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
                     _lastWords.isEmpty ? 'Listening...' : _lastWords,
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: primaryColor,
                       fontStyle: FontStyle.italic,
                     ),
                   ),
                 ),
               if (_autoSubmitPending)
-                const Padding(
-                  padding: EdgeInsets.only(top: 8),
-                  child: CircularProgressIndicator(),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: CircularProgressIndicator(color: primaryColor),
                 ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _saveTask,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryColor,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 50),
+                ),
                 child: const Text('Add Task'),
               ),
             ],
@@ -233,9 +331,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     );
   }
 
-  Widget _buildMicButton() {
+  Widget _buildMicButton(Color primaryColor) {
     if (!_initializationComplete) {
-      return const Icon(Icons.mic, color: Colors.grey);
+      return Icon(Icons.mic, color: Colors.grey);
     }
     return IconButton(
       icon: Icon(
@@ -243,7 +341,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         color:
             _isListening
                 ? Colors.red
-                : (_speechEnabled ? Colors.blue : Colors.grey),
+                : (_speechEnabled ? primaryColor : Colors.grey),
       ),
       onPressed: _toggleListening,
     );

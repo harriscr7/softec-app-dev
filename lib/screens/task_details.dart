@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:softec_project/models/task_model.dart';
 import 'package:softec_project/providers/task_provider.dart';
@@ -14,18 +15,38 @@ class TaskDetails extends StatefulWidget {
 
 class _TaskDetailsState extends State<TaskDetails> {
   late TextEditingController _titleController;
+  late DateTime _dueDate;
+  late TimeOfDay _dueTime;
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.task.title);
+    _dueDate = widget.task.dueDate;
+    _dueTime = TimeOfDay.fromDateTime(widget.task.dueDate);
   }
 
-  @override
-  void dispose() {
-    _titleController.dispose();
-    super.dispose();
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _dueDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null && picked != _dueDate) {
+      setState(() => _dueDate = picked);
+    }
+  }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: _dueTime,
+    );
+    if (picked != null && picked != _dueTime) {
+      setState(() => _dueTime = picked);
+    }
   }
 
   Future<void> _updateTask() async {
@@ -34,13 +55,21 @@ class _TaskDetailsState extends State<TaskDetails> {
     final uid = Provider.of<AuthProvider>(context, listen: false).user?.uid;
     if (uid == null) return;
 
+    final updatedDueDateTime = DateTime(
+      _dueDate.year,
+      _dueDate.month,
+      _dueDate.day,
+      _dueTime.hour,
+      _dueTime.minute,
+    );
+
     final updatedTask = Task(
       id: widget.task.id,
       title: _titleController.text,
-      description: widget.task.description, // Keep original
-      dueDate: widget.task.dueDate, // Keep original
-      category: widget.task.category, // Keep original
+      dueDate: updatedDueDateTime,
+      category: widget.task.category,
       isCompleted: widget.task.isCompleted,
+      isRecurring: widget.task.isRecurring,
       createdAt: widget.task.createdAt,
     );
 
@@ -54,19 +83,9 @@ class _TaskDetailsState extends State<TaskDetails> {
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Task updated successfully'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-
       Navigator.pop(context);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -74,6 +93,9 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.primaryColor;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Task'),
@@ -104,14 +126,65 @@ class _TaskDetailsState extends State<TaskDetails> {
               ),
               autofocus: true,
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _updateTask,
-              child: const Text('Save Changes'),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _selectDate(context),
+                    icon: Icon(Icons.calendar_today, color: primaryColor),
+                    label: Text(
+                      DateFormat('MMM dd, yyyy').format(_dueDate),
+                      style: TextStyle(color: primaryColor),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: primaryColor,
+                      backgroundColor: primaryColor.withOpacity(0.1),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _selectTime(context),
+                    icon: Icon(Icons.access_time, color: primaryColor),
+                    label: Text(
+                      _dueTime.format(context),
+                      style: TextStyle(color: primaryColor),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: primaryColor,
+                      backgroundColor: primaryColor.withOpacity(0.1),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _updateTask,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryColor,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                child:
+                    _isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text('Save Changes'),
+              ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    super.dispose();
   }
 }

@@ -25,15 +25,13 @@ class _SummariesScreenState extends State<SummariesScreen> {
     });
 
     try {
-      // Initialize with your free-tier API key
-      const apiKey =
-          'AIzaSyC3FdGM6kq7cIY5rOHv2BPsEFFC_qVwado'; // Get from Google AI Studio
+      const apiKey = 'AIzaSyC3FdGM6kq7cIY5rOHv2BPsEFFC_qVwado';
       final model = GenerativeModel(
-        model: 'gemini-1.5-flash', // Free tier model
+        model: 'gemini-1.5-flash',
         apiKey: apiKey,
         generationConfig: GenerationConfig(
-          maxOutputTokens: 300, // Keep responses short
-          temperature: 0.3, // More deterministic output
+          maxOutputTokens: 300,
+          temperature: 0.3,
         ),
       );
 
@@ -66,7 +64,6 @@ class _SummariesScreenState extends State<SummariesScreen> {
   }
 
   String _formatSummary(String text) {
-    // Ensure proper bullet formatting
     return text
         .replaceAll(RegExp(r'^[\s*•-]+', multiLine: true), '• ')
         .replaceAll(RegExp(r'\n{3,}'), '\n\n')
@@ -117,8 +114,23 @@ class _SummariesScreenState extends State<SummariesScreen> {
                     maxLines: 8,
                     decoration: InputDecoration(
                       labelText: 'Paste your notes',
-                      border: const OutlineInputBorder(),
+                      labelStyle: const TextStyle(fontSize: 12),
+                      filled: true,
+                      fillColor: Colors.white,
                       hintText: 'Example: Lecture notes, meeting minutes...',
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Theme.of(context).primaryColor,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Theme.of(context).primaryColor,
+                          width: 2,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -176,6 +188,17 @@ class _SummariesScreenState extends State<SummariesScreen> {
             ),
             const SizedBox(height: 16),
             FilledButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 32,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
               onPressed: _isLoading ? null : _generateSummary,
               child: const Text('Generate Summary'),
             ),

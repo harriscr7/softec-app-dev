@@ -19,17 +19,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _submit() async {
     sendTestNotification();
-    // final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    // final email = emailController.text.trim();
-    // final password = passwordController.text.trim();
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
 
-    // try {
-    //   await authProvider.login(email, password);
-    // } catch (e) {
-    //   ScaffoldMessenger.of(
-    //     context,
-    //   ).showSnackBar(SnackBar(content: Text(e.toString())));
-    // }
+    try {
+      await authProvider.login(email, password);
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
   }
 
   @override

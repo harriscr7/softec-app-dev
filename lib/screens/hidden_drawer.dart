@@ -24,11 +24,11 @@ class _HiddenDrawerState extends State<HiddenDrawer> {
     pages = [
       ScreenHiddenDrawer(
         ItemHiddenMenu(
-          colorLineSelected: Colors.red,
+          colorLineSelected: AppColors.primary,
           name: "Home Page",
-          baseStyle: const TextStyle(color: Colors.white, fontSize: 18),
+          baseStyle: const TextStyle(color: Colors.black, fontSize: 18),
           selectedStyle: const TextStyle(
-            color: Colors.blueAccent,
+            color: AppColors.primary,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
@@ -37,11 +37,11 @@ class _HiddenDrawerState extends State<HiddenDrawer> {
       ),
       ScreenHiddenDrawer(
         ItemHiddenMenu(
-          colorLineSelected: Colors.red,
+          colorLineSelected: AppColors.primary,
           name: "Profile Page",
-          baseStyle: const TextStyle(color: Colors.white, fontSize: 18),
+          baseStyle: const TextStyle(color: Colors.black, fontSize: 18),
           selectedStyle: const TextStyle(
-            color: Colors.blueAccent,
+            color: AppColors.primary,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
@@ -50,11 +50,11 @@ class _HiddenDrawerState extends State<HiddenDrawer> {
       ),
       ScreenHiddenDrawer(
         ItemHiddenMenu(
-          colorLineSelected: Colors.red,
+          colorLineSelected: AppColors.primary,
           name: "Settings Page",
-          baseStyle: const TextStyle(color: Colors.white, fontSize: 18),
+          baseStyle: const TextStyle(color: Colors.black, fontSize: 18),
           selectedStyle: const TextStyle(
-            color: Colors.blueAccent,
+            color: AppColors.primary,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
@@ -68,7 +68,6 @@ class _HiddenDrawerState extends State<HiddenDrawer> {
   Widget build(BuildContext context) {
     return HiddenDrawerMenu(
       disableAppBarDefault: true,
-      enableShadowItensMenu: true,
       curveAnimation: Curves.decelerate,
       backgroundColorMenu:
           AppColors.secondary, // Make menu background transparent

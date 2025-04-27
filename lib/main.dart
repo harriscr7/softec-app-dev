@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:softec_project/providers/mood_provider.dart';
 import 'package:softec_project/providers/task_provider.dart';
 import 'package:softec_project/providers/user_provider.dart';
-import 'package:softec_project/services/notifications_services.dart';
+import 'package:softec_project/services/noti_service.dart';
 
 import 'firebase_options.dart';
 import 'providers/theme_provider.dart';
@@ -15,7 +15,8 @@ import 'screens/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // await NotificationService.instance.initialize();
+  await NotificationService().initialize();
+
   runApp(const MyApp());
 }
 

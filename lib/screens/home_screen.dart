@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> {
                       title: "Tasks",
                       description: "Manage your daily tasks and to-do items",
                       icon: Icons.task,
-                      color: Colors.blue,
+                      color: theme.primaryColor,
                     ),
 
                     const SizedBox(height: 16),
@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
                       title: "Schedule",
                       description: "View and manage your calendar schedule",
                       icon: Icons.calendar_today,
-                      color: Colors.green,
+                      color: theme.primaryColor,
                     ),
 
                     const SizedBox(height: 16),
@@ -99,7 +99,7 @@ class _HomePageState extends State<HomePage> {
                       title: "Mood",
                       description: "Track your daily mood and emotional trends",
                       icon: Icons.mood,
-                      color: Colors.orange,
+                      color: theme.primaryColor,
                     ),
 
                     const SizedBox(height: 16),
@@ -110,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                       title: "Reminders",
                       description: "Set and manage your important reminders",
                       icon: Icons.notifications,
-                      color: Colors.purple,
+                      color: theme.primaryColor,
                     ),
 
                     const SizedBox(height: 16),
@@ -121,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                       title: "Summaries",
                       description: "View your task summaries and insights",
                       icon: Icons.summarize,
-                      color: Colors.teal,
+                      color: theme.primaryColor,
                     ),
 
                     const SizedBox(height: 16),
@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                       title: "Goal Planner",
                       description: "Break down big goals into actionable steps",
                       icon: Icons.checklist_rtl,
-                      color: Colors.indigo,
+                      color: theme.primaryColor,
                     ),
                   ],
                 ),

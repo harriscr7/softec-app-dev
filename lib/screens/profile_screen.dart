@@ -2,9 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:hidden_drawer_menu/controllers/simple_hidden_drawer_controller.dart';
 import 'package:provider/provider.dart';
 import '../providers/user_provider.dart';
+import '../providers/auth_provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
+
+  Future<void> _signOut(BuildContext context) async {
+    try {
+      await Provider.of<AuthProvider>(context, listen: false).logout();
+      if (context.mounted) {
+        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+      }
+    } catch (e) {
+      if (context.mounted) {}
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +49,8 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Profile"),
-        backgroundColor: Colors.blue,
+        title: Text("Profile"),
+        backgroundColor: Theme.of(context).primaryColor,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.menu),
@@ -73,7 +85,8 @@ class ProfileScreen extends StatelessWidget {
                   children: [
                     Text(
                       'Profile Information',
-                      style: Theme.of(context).textTheme.titleLarge,
+
+                      style: TextStyle(color: Theme.of(context).primaryColor),
                     ),
                     const SizedBox(height: 16),
                     _buildInfoRow('Username', user.username),
@@ -95,22 +108,14 @@ class ProfileScreen extends StatelessWidget {
                   children: [
                     Text(
                       'Account Settings',
-                      style: Theme.of(context).textTheme.titleLarge,
+                      style: TextStyle(color: Theme.of(context).primaryColor),
                     ),
                     const SizedBox(height: 16),
+
                     ListTile(
-                      leading: const Icon(Icons.edit),
-                      title: const Text('Edit Profile'),
-                      onTap: () {
-                        // TODO: Implement edit profile
-                      },
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.lock),
-                      title: const Text('Change Password'),
-                      onTap: () {
-                        // TODO: Implement change password
-                      },
+                      leading: const Icon(Icons.logout),
+                      title: const Text('Sign Out'),
+                      onTap: () => _signOut(context),
                     ),
                   ],
                 ),

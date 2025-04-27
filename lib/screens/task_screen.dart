@@ -20,8 +20,8 @@ class TaskScreen extends StatelessWidget {
             MaterialPageRoute(builder: (context) => const AddTaskScreen()),
           );
         },
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: Icon(Icons.add, color: Theme.of(context).colorScheme.onPrimary),
+        backgroundColor: Theme.of(context).primaryColor,
+        child: Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -87,34 +87,13 @@ class TaskScreen extends StatelessWidget {
                       onDismissed: (direction) async {
                         try {
                           await taskProvider.deleteTask(task.id, uid);
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Task deleted successfully'),
-                                backgroundColor: Colors.green,
-                                behavior: SnackBarBehavior.floating,
-                              ),
-                            );
-                          }
-                        } catch (e) {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'Failed to delete task: ${e.toString()}',
-                                ),
-                                backgroundColor: Colors.red,
-                                behavior: SnackBarBehavior.floating,
-                              ),
-                            );
-                          }
-                        }
+                        } catch (e) {}
                       },
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 12),
                         height: 80, // Fixed height for each task item
                         decoration: BoxDecoration(
-                          color: Theme.of(context).cardColor,
+                          color: Colors.grey.withOpacity(0.25),
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(

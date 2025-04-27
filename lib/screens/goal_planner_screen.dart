@@ -25,15 +25,13 @@ class _GoalPlannerScreenState extends State<GoalPlannerScreen> {
     });
 
     try {
-      // Initialize with your free-tier API key
-      const apiKey =
-          'AIzaSyC3FdGM6kq7cIY5rOHv2BPsEFFC_qVwado'; // Get from Google AI Studio
+      const apiKey = 'AIzaSyC3FdGM6kq7cIY5rOHv2BPsEFFC_qVwado';
       final model = GenerativeModel(
-        model: 'gemini-1.5-flash', // Free tier model
+        model: 'gemini-1.5-flash',
         apiKey: apiKey,
         generationConfig: GenerationConfig(
-          maxOutputTokens: 300, // Keep responses short
-          temperature: 0.3, // More deterministic output
+          maxOutputTokens: 300,
+          temperature: 0.3,
         ),
       );
 
@@ -58,7 +56,6 @@ class _GoalPlannerScreenState extends State<GoalPlannerScreen> {
         throw Exception('No checklist generated');
       }
 
-      // Parse the numbered list into individual tasks
       final tasks =
           text
               .split('\n')
@@ -100,9 +97,24 @@ class _GoalPlannerScreenState extends State<GoalPlannerScreen> {
               controller: _goalController,
               decoration: InputDecoration(
                 labelText: 'Enter your goal',
+                labelStyle: const TextStyle(fontSize: 12),
+                filled: true,
+                fillColor: Colors.white,
                 hintText:
                     'e.g. "Apply for internship", "Plan a trip to Europe"',
-                border: const OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Theme.of(context).primaryColor,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Theme.of(context).primaryColor,
+                    width: 2,
+                  ),
+                ),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.search),
                   onPressed: _generateChecklist,
@@ -134,7 +146,10 @@ class _GoalPlannerScreenState extends State<GoalPlannerScreen> {
                         margin: const EdgeInsets.symmetric(vertical: 4),
                         child: ListTile(
                           title: Text(_subtasks[index]),
-                          leading: CircleAvatar(child: Text('${index + 1}')),
+                          leading: CircleAvatar(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            child: Text('${index + 1}'),
+                          ),
                         ),
                       ),
                 ),
