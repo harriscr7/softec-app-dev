@@ -39,6 +39,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 'assets/sp_screen_gt.png',
                 width: 173.91,
                 fit: BoxFit.fitWidth,
+                color: Colors.white.withOpacity(0.8),
               ),
             ),
           ),
